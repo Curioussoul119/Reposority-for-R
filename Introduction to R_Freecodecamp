@@ -1,0 +1,715 @@
+# Install packages
+#dplyr: For manipulating data frames,
+#tidyr:: For cleaning information
+#stringr:: For working with strings or text information.
+#lubridate:: For manipulating date information
+#httr :: Working with website data
+# ggvis For interactive visualizations.
+#ggplot2:: For creating plots and graphics 
+# shiny :: That allows you to work with applications on websites.
+# rio :: For importing and exporting data
+#rmarkdown:: allows you to create interactive notebooks for communication.
+# One package to load them all..is packman.
+# pacman:: One package to load all of the above.
+library(pacman)
+pacman::p_load(pacman, dplyr,GGally, ggplot2, ggthemes,
+                ggvis, httr, lubridate, plotly,rio,rmarkdown,shiny,
+               stringr, tidyr)
+library(datasets)
+head(iris)
+?plot
+library(graphics)
+library(base)
+plot(iris$Species) #categorical variable
+plot(iris$Petal.Length) # Quantitative variable
+plot(iris$Species, iris$Petal.Width) #cat x quant
+plot(iris$Petal.Length,iris$Petal.Width) #Quant pair
+plot(iris) # Entire data frame
+#plot with options
+plot(iris$Petal.Length, iris$Petal.Width,
+     col = "#cc0000", # Hex code for datalab.cc red
+     pch = 19, #use solid circles for points
+     main = "Iris: Petal Length vs. Petal Width",
+     xlab = "Petal Length",
+     ylab = "Petal Width")
+# plot formulas with plot()
+
+plot(cos,0,2*pi)
+plot(exp, 1, 5)  
+plot(dnorm, -3, +3)  
+
+# Formula plot with options
+plot(dnorm, -3,3,
+     col ="#cc0000",
+     lwd =5,
+     main ="Standard Normal Distribution",
+     xlab = "Z-Scores",
+     ylab = "Density")
+  ?mtcars
+  
+require(graphics)
+pairs(mtcars, main = "mtcars data", gap = 1/4)
+coplot(mpg ~ disp | as.factor(cyl), data = mtcars,
+       panel = panel.smooth, rows = 1)
+head(mtcars)
+
+#Bar charts
+
+barplot(mtcars$cyl) # doesn't work
+# Need a table with frequencies for each category
+cylinders <- table(mtcars$cyl) # Create Table
+barplot(cylinders) # Bar chart  
+plot(cylinders)  # Default X_Y plot (lines)
+
+# Basic Histograms
+hist(iris$Sepal.Length)
+hist(iris$Sepal.Width)
+hist(iris$Petal.Length)
+hist(iris$Petal.Width)
+
+# Histogram by group
+
+# Put graphs in 3rows and 1 column
+par(mfrow = c(3,1))
+# Histogram for each species using options
+hist(iris$Petal.Width [iris$Species =="setosa"],
+     xlim =c(0,3),
+     breaks =9,
+     main ="Petal width for Setosa",
+     xlab = "",
+     col = "red")
+hist(iris$Petal.Width [iris$Species == "versicolor"],
+     xlim = c(0,3),
+     breaks =9,
+     main = "Petal width for Versicolor",
+     xlab = "",
+     col = "purple")
+  
+hist(iris$Petal.Width [iris$Species == "virginica"],
+     xlim = c(0,3),
+     breaks =9,
+     main = "Petal Width for Virginica",
+     xlab= "",
+     col = "blue")
+# Restore graphic parameter
+par(mfrow=c(1,1))
+# Clear packages
+#detach("package:datasets", unload = TRUE) # For base
+#Error in detach("package:datasets", unload = TRUE) : 
+  #invalid 'name' argument
+
+# Scatter plots: plot b/w two quantitative variables
+
+# Linear, Spread, Outliers, Correlation
+library(datasets)
+head(mtcars)
+# Good to first check uni-variate distributions
+hist(mtcars$wt)
+hist(mtcars$mpg)
+
+# Add some options
+plot(mtcars$wt, mtcars$mpg,
+     pch= 19, # Solid Circle
+     cex = 1.5, # Make 150% size
+     col = "#cc0000", #Red
+     main ="MPG as a Function of weight of Cars",
+     xlab = "Weight (in 1000 pounds)",
+     ylab ="MPG")
+# Overlaying plots
+
+?lynx
+head(lynx)
+size(lynx)
+summary(lynx)
+plot(lynx)
+# Histogram
+# Default
+hist(lynx)
+# Add some options
+hist(lynx,
+     breaks = 14, # Suggests 14 bins
+     freq = FALSE, # Axis shows density, not freq.
+     col = "thistle1", #color for histogram
+     main = paste ("Histogram of Annual Canadian Lynx",
+                    "Trappings, 1821-1934"),
+      xlab = "Number of Lynx Trapped")
+# Add a normal distribution
+curve(dnorm(x, mean = mean(lynx),sd =sd(lynx)),
+      col ="thistle4", #color of curve
+      lwd =2, # Line width of 2 pixels
+      add = TRUE) # Superimpose on previous graph
+# Add two kernel density estimators
+lines(density(lynx), col = "blue", lwd =2)
+lines(density(lynx,adjust =3), col ="purple", lwd=2)
+
+# Add a rug plot
+rug(lynx, lwd=2, col ="gray")
+
+
+#Summary 
+summary(iris) # Entire data frame
+summary(iris$Sepal.Length) #Quantitative Variable
+summary(iris$Species) #Categorical Variable
+
+# Describe()
+
+p_load(psych)
+install.packages("psych")
+library(psych)
+# For Quantitative variables only.
+
+describe(iris$Sepal.Length)# One Quantitative variable
+describe(iris)
+
+hist(iris$Petal.Length)
+summary(iris$Species)
+
+# Versicolor
+hist(iris$Petal.Length[iris$Species == "versicolor"],
+     main ="Petal Length: Versicolor")
+#Setosa 
+hist(iris$Petal.Length[iris$Species == "setosa"],
+     main = "Petal Length: Setosa")
+#Select by value
+
+#Short petals only(all setosa)
+hist(iris$Petal.Length[iris$Petal.Length <2],
+     main = "Petal Length <2")
+# Multiple selectors
+
+# Short Virginica petals only
+hist(iris$Petal.Length[iris$Species == "virginica" &
+                         iris$Petal.Length <5.5],
+     main =" Petal Length: Short Virginica")
+# Create Subsample
+#Format : data[rows, columns]
+# Leave rows or columns blank to select all
+i.setosa <- iris[iris$Species == "setosa", ]
+
+# Explore Subsample
+head(i.setosa)
+summary(i.setosa$Petal.Length)
+hist(i.setosa$Petal.Length)
+
+#Clean Environment
+rm(list= ls())
+# accessing data formats
+
+# Data types and Data Structures
+ # data types #Numeric(Integer, Single, & Double), Character, logical,
+# complex, & raw.
+# Data Structures... Vector, Matrix/array, Data Frame, List.
+#Vector....1+ numbers in 1d array, all same data type.
+# Matrix- Two dimensions, same length, same data class, columns not named.
+# Array - Identical to a matrix but 3+ dimensions.
+# Data Frame- can have vectors of multiple data types.
+#all same length, closest R Analogue to spreadsheet.
+#special functions.
+#List- Most Flexible, Ordered collection of elements, 
+#aNY CLASS, LENGTH OR STRUCTURE..CAN INclude lists.
+#coersion- changing data object from one type to another.
+#ex--Character to logical, matrix to data frame,
+# double to integer etc.
+
+# Data types
+#Numeric
+
+n1 <- 15 # Double precision by default
+n1
+typeof(n1)
+n2 <- 1.5
+n2
+typeof(n2)
+
+# Character
+
+c1 <- "c"
+c1
+typeof(c1)
+c2 <- "A string of text"
+c2
+typeof(c2)
+# logical
+l1 <- TRUE
+l1
+typeof(l1)
+l2 <- F
+l2
+typeof(l2)
+
+# Data Structures
+# Vector
+
+v1 <- c(1,2,3,4,5)
+v1
+is.vector(v1)
+
+v2 <- c("a", "b", "c")
+v2
+is.vector(v2)
+
+v3 <- c(TRUE, TRUE, FALSE, FALSE, TRUE)
+v3
+is.vector(v3)
+
+# Matrix
+
+m1 <- matrix(c(T,T,F,F,T,F), nrow =2)
+m1
+m2 <- matrix(c("a","b",
+               "c", "d"),
+             nrow = 2,
+             byrow = T)
+m2
+## array
+
+# give data, then dimensions(rows, columns, tables)
+a1 <- array(c(1:24), c(4,3,2))
+a1
+
+# Data frame
+# can combine vectors of the same length
+vNumeric <- c(1,2,3)
+vCharacter <- c("a","b","c")
+vLogical <- c(T, F, T)
+
+dfa <- cbind(vNumeric, vCharacter, vLogical)
+dfa # Matrix of one data type
+
+df <- as.data.frame(cbind(vNumeric, vCharacter, vLogical))
+df # Makes a data frame with three different data types
+
+# LIST
+
+o1 <- c(1,2,3)
+o2 <- c("a", "b", "c", "d")
+o3 <- c(T,F, T, T, F)
+
+list1 <- list(o1,o2,o3)
+list1
+
+list2 <- list(o1, o2, o3, list1) # Lists within lists
+list2
+
+# Co-ercing types
+#automatic coercion
+# >Goes to least restrictive data type
+
+(coerce1 <- c(1, "b", TRUE))
+typeof(coerce1)
+
+# Coerce numeric to integer
+(coerce2 <- 5)
+typeof(coerce2)
+(coerce3 <- as.integer(5))
+typeof(coerce3)
+## coerce character to numeric
+(coerce4 <- c("1", "2", "3"))
+typeof(coerce4)
+
+(coerce5 <- as.numeric(coerce4))
+typeof(coerce5)
+
+(coerce6 <- matrix(1:9, nrow = 3))
+is.matrix(coerce6)
+
+(coerce7 <- as.data.frame(coerce6))
+is.data.frame(coerce7)
+
+# Factors, Categories and names.
+# An "attribute" of a vector that specifies the
+# possible values & their order.
+
+# Create DATA
+
+(x1 <- 1:3)
+(y <- 1:9)
+
+# combine variables
+(df1 <- cbind.data.frame(x1, y))
+typeof(df1$x1)
+str(df1)
+?str
+
+# as.factor
+(x2 <- as.factor(c(1:3)))
+
+(df2 <- cbind.data.frame(x2,y))
+typeof(df2$x2)
+str(df2)
+
+# Define Existing variable as factor
+
+x3 <- c(1:3)
+x3
+df3 <- cbind.data.frame(x3,y)
+(df3$x3 <- factor(df3$x3,
+  levels = c(1,2,3)))
+typeof(df3$x3)
+str(df3)
+
+# Labels for factor
+x4 <- c(1:3)
+df4 <- cbind.data.frame(x4,y)
+df4$x4 <- factor(df4$x4, 
+      levels = c(1,2,3),
+      labels = c("macOS","windows","Linux"))
+df4
+typeof(df4)
+str(df4)
+# Ordered factors and labels
+
+x5 <- c(1:3)
+df5 <- cbind.data.frame(x5,y)
+(df5$x5 <- ordered(df5$x5,
+  levels = c(3,1,2),
+  labels = c("No", "Maybe", "Yes")))
+df5
+
+# clean up
+#clear environment
+rm(list = ls())
+
+# Ad-hoc data..data entering and accessing
+#ad hoc=created or done for a particular purpose as necessary.
+
+#many methods: colon, seq, c, scan, & rep.
+# <- That's the assignment operator
+# Assignment Operator
+# Use "<-" to assign values to a variable.This is read as
+# "gets.". It can go the other direction "->" and you can use
+# an equals sign "=" but those are generally poor form in R.
+
+# IN RStudio, the short cut option+- (option-dash)
+# inserts the assignment operator and a space: "<- "
+
+# Colon Operator
+# Assigns number 0 through 10 t0 x1
+x1 <- 0:10
+x1
+# descending order
+x2 <- 10:0
+x2
+
+#seq
+?seq
+# Ascending values (duplicates 1:10)
+(x3 <- seq(10))
+#specify change in values
+(x4 <- seq(30,0, by = -3))
+
+#Enter multiple values with C
+# c = concatenate or (combine or collect)
+?c
+x5 <- c(5,4,1,6,7,2,2,3,2,8)
+x5
+x6 <- scan() # After running this command, go to console
+# Hit return after each number
+# Hit return twice to stop
+x6
+
+#REP
+?rep # R help on Rep
+x7 <- rep(TRUE, 5)
+x7
+# Repeats set
+x8 <- rep(c(TRUE, FALSE),5)
+x8
+# Repeats items in set
+x9 <- rep(c(TRUE, FALSE), each =5)
+x9
+
+#clean up
+#clear environment
+rm(list =ls())
+
+# IMporting data
+# File formats: CSV, TXT, XLSX, JSON
+# R has built-in functions for importing data in
+#many formats
+#rio combines all of R's import functions into one
+# simple utility
+
+# About EXCEL FILES
+# From the official R Documentation
+browseURL("http://j.mp/2aFZUrJ")
+
+# you have been warned
+# Importing with RIO
+install.packages('rio', dependencies=TRUE, repos='http://cran.rstudio.com/') 
+library(rio)
+?rio
+#CSV
+rio_csv <- import("~/Downloads/QVI_purchase_behaviour.csv")
+
+# Non-Zero Exit status when installing packages.
+#curl: sudo apt-get install curl
+#libssl-dev: sudo apt-get install libssl-dev
+#libcurl: sudo apt-get install libcurl4-openssl-dev
+#xml2: sudo apt-get install libxml2-dev
+#sudo apt-get install gsl-bin libgsl0-dev
+
+download.file('http://stat-athens.aueb.gr/~jbn/papers/files/14/14_bivpois_RDATA.zip', 
+              f <- tempfile())
+unzip(f, exdir=tempdir())
+file.copy(file.path(tempdir(), '.RData'), 'bivpois.RData')
+# the above copies the .RData file to a file called bivpois.RData in your current 
+# working directory.
+load('bivpois.RData')
+
+install.packages("tidyverse")
+
+library(tidyverse)
+install.packages("rio")
+library(rio)
+install_formats()
+
+#Back to importing
+# xlsx
+rio_xlsx <- import("~/Downloads/QVI_transaction_data.xlsx")
+head(rio_xlsx)
+#CSV
+rio_csv <- import("~/Downloads/QVI_purchase_behaviour.csv")
+head(rio_csv)
+#TXT
+rio_txt <- import("~/Desktop/file_name")
+head(rio_txt)
+
+# Data Viewer
+View(rio_csv)
+# Read.Table for TXT files
+
+# R's built-in function for text files (used by rio)
+# Text files
+# load a spreadsheet that has been saved as tab-delimited
+# text file. Need to give complete address to file. This command
+# gives an error on missing data but works on complete data.
+
+r_txt1 <- read.table("~/Desktop/mbb.txt", header =TRUE)
+
+# This works with missing data by specifying the seperator:
+# \t is for tabs, sep = "," for commas. R converts missing to "NA"
+r_txt2 <- read.table("~/Desktop/mbb.txt",
+                     header = TRUE,
+                     sep = "\t")
+# Read.csv for CSV files
+# R's built-in function for csv files(also used by rio)
+
+# CSV FILES
+# Don't have to specify delimiters for missing data
+# because CSV means " comma seperated values".
+trends.csv <- read.csv("~/Desktop/mbb.csv", header = TRUE)
+
+# Clean up
+# Clear Environment
+rm(list =ls())
+
+# Modeling Data
+# Hierarchical 
+#Clustering 
+# Heirarchical vs Set K
+# Measures of distance
+
+# Divisive vs Agglomerative
+# Euclidean Distance, Hierarchical clustering & divisive method.
+
+#Heirachical clustering
+library(datasets)
+# Load data
+?mtcars
+head(mtcars)
+cars <- mtcars[, c(1:4, 6:7, 9:11)] # Select Variables
+head(cars)
+
+#compute and plot clusters
+# Save heirarchical clustering to "hc." This code uses pipes from dplyr
+require(dplyr)
+hc <- cars %>% #get cars data
+      dist %>% # compute distance/dissimilarity matrix
+      hclust   # Computer hierarchical clusters
+hc
+plot(hc) # Plot dendrogram
+
+# Add boxes to plot
+
+rect.hclust(hc, k=2, border ="gray")
+rect.hclust(hc, k=3, border = "blue")
+rect.hclust(hc, k=4, border = "green4")
+rect.hclust(hc, k=5, border = "darkred")
+
+
+rm(list=ls())
+
+# Principal components
+# That is, less noise & fewer unhelpful variables
+# in data = more meaning
+#AKA dimensionality reduction
+# Most common method is Principal component aNALYSIS(PCA)
+
+#pca - TWO VARIABLES -PLOT
+# pca - rEGRESSION- FITTING LINE
+      # pERPENDICULAR DISTANCE
+#    - COLLAPSE
+# rOTATE
+# tHAT'S  THE PC went from 2D to 1 D
+#but maintained the most important information
+#and we made analysis & interpretation easier and more reliable
+
+
+#PrincipalComponents.R
+library(datasets)
+head(mtcars)
+cars <- mtcars[, c(1:4, 6:7, 9:11)] # Select Variables
+head(cars)
+
+#Compute PCA
+
+# For entire data frame
+pc <- prcomp(cars,
+             center = TRUE, # Centers means to 0(optional)
+             scale =TRUE) # sets unit variance(helpful)
+# To specify variables 
+pc <- prcomp(~mpg+ cyl + disp + hp + wt + qsec + am +
+               gear + carb,
+             data =mtcars,
+             center = TRUE,
+             scale = TRUE)
+# Examine results
+# Get summary stats
+summary(pc)
+# Screen plot for number of components
+plot(pc)
+
+#get standard deviations and roatation
+pc
+# See how cases load on PC's
+predict(pc) %>% round(2)
+
+# Biplot of first two components
+biplot(pc)
+
+# REGRESSION
+#Use many variables to predict scores on one variable
+# Many versions & adaptations of regression make it flexible and powerful
+rm(list =ls())
+library(datasets)
+?USJudgeRatings
+head(USJudgeRatings)
+data <- USJudgeRatings
+
+#Define Variable groups
+x <- as.matrix(data[-12])
+y <-data[, 12]
+
+#Regression with simultaneous entry
+reg1 <- lm(y ~ x)
+reg1
+# or specify variables individually
+reg1 <- lm(RTEN ~ CONT + INTG + DMNR + DILG + CFMG+
+             DECI + PREP + FAMI + ORAL + WRIT + PHYS,
+           data = USJudgeRatings)
+# Results
+reg1 # Co-efficients only
+summary(reg1) # Inferential tests
+
+# More summaries
+anova(reg1)
+coef(reg1)
+confint(reg1)
+resid(reg1)
+hist(residuals(reg1))
+
+# Additinal models
+#use two additional libraries
+library(pacman)
+p_load(lars, caret)
+#This function is a wrapper for library and require. 
+#It checks to see if a package is installed, if not it attempts to install
+#the package from CRAN and/or 
+
+# Conventional step-wise regression
+stepwise <- lars(x,y, type ="stepwise")
+
+#stagewise: Like stepwise but with better generalizability
+forward <- lars(x,y, type = "forward.stagewise")
+
+# LAR : Least angle regression
+lar <- lars(x,y, type = "lar")
+#LASSO: Least absolute shrinkage and selection operator
+
+lasso <- lars(x,y, type = "lasso")
+
+#comparision of R^2 for new models
+r2comp <- c(stepwise$R2[6], forward$R2[6],
+            lar$R2[6], lasso$R2[6]) %>%
+            round(2)
+names(r2comp) <- c("stepwise", "forward", "lar", "lasso")
+r2comp #show values of R^2
+
+
+#clear environment
+rm(list=ls())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
